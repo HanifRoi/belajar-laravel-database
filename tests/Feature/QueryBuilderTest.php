@@ -345,9 +345,54 @@ class QueryBuilderTest extends TestCase
         self::assertEquals(3000000, $collection[0]->max_price);
     }
 
+    public function insertProductLaptop()
+    {
+        DB::table('products')->insert([
+            'id'=>'3',
+            'name'=>'Asus',
+            'description'=>'Hp terlama gw',
+            'price'=>'7000000',
+            'category_id'=>'LAPTOP'
+        ]);
+        DB::table('products')->insert([
+            'id'=>'4',
+            'name'=>'Acer',
+            'description'=>'Belum pegang',
+            'price'=>'11000000',
+            'category_id'=>'LAPTOP'
+        ]);
+    }
 
+    public function testGroupBy()
+    {
+        $this->insertTableProduct();
+        $this->insertProductLaptop();
 
+        $collection = DB::table("products")
+        ->select("category_id", DB::raw("count(*) as total_product"))
+        ->groupBy("category_id")
+        ->orderBy("category_id", "desc")
+        ->get();
 
+        self::assertCount(2, $collection);
+        self::assertEquals("LAPTOP", $collection[0]->category_id);
+        self::assertEquals("HP", $collection[1]->category_id);
+        self::assertEquals(2, $collection[0]->total_product);
+        self::assertEquals(2, $collection[1]->total_product);
+    }
 
+    public function testGroupByHaving()
+    {
+        $this->insertTableProduct();
+        $this->insertProductLaptop();
 
+        $collection = DB::table("products")
+        ->select("category_id", DB::raw("count(*) as total_product"))
+        ->groupBy("category_id")
+        ->having(DB::raw("count(*)"), ">", 2)
+        ->orderBy("category_id", "desc")
+        ->get();
+
+        self::assertCount(0, $collection);
+    }
 }
