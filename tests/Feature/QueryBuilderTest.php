@@ -299,6 +299,20 @@ class QueryBuilderTest extends TestCase
 
     }
 
+    public function testCursor()
+    {
+        $this->insertManyCategories();
+
+        $collection = DB::table('categories')->orderBy("id")->cursor();
+        self::assertNotNull($collection);
+        $collection->each(function ($value, $key) {
+            Log::info(json_encode($value));
+        });
+
+    }
+
+
+
 
 
 
