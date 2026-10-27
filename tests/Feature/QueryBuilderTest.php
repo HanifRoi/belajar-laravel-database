@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
@@ -44,6 +45,96 @@ class QueryBuilderTest extends TestCase
             Log::info(json_encode($value));
         });
     }
+
+    public function insertCategories()
+    {
+        DB::table('Categories')->insert([
+            'id' => 'HP',
+            'name' => 'Hp',
+            'created_at'=> '2020-10-10 10:10:10'
+        ]);
+        DB::table('Categories')->insert([
+            'id' => 'LAPTOP',
+            'name' => 'Laptop',
+            'created_at'=> '2020-10-10 10:10:10'
+        ]);
+        DB::table('Categories')->insert([
+            'id' => 'GUNTING',
+            'name' => 'Gunting',
+            'created_at'=> '2020-10-10 10:10:10'
+        ]);
+        DB::table('Categories')->insert([
+            'id' => 'SISIR',
+            'name' => 'Sisir',
+            'created_at'=> '2020-10-10 10:10:10'
+        ]);
+    }
+
+    public function testWhere()
+    {
+        $this->insertCategories();
+
+        $collection = DB::table('Categories')->where(function(Builder $builder){
+            $builder->where('id', '=', 'HP');
+            $builder->orWhere('id', '=', 'LAPTOP');
+            //SELECT * FROM Categories WHERE (id = HP or id = LAPTOP);
+        })->get();
+
+        self::assertCount(2, $collection);
+        $collection->each(function ($value, $key) {
+            Log::info(json_encode($value));
+        });
+    }
+    
+    public function testWhereBetween()
+    {
+        $this->insertCategories();
+        $collection = DB::table('Categories')->whereBetween('created_at', ['2020-10-10 10:10:10', '2020-10-10 11:11:11'])->get();
+
+        self::assertCount(4, $collection);
+        $collection->each(function ($value, $key) {
+            Log::info(json_encode($value));
+        });
+    }
+
+    public function testWhereIn()
+    {
+        $this->insertCategories();
+        $collection = DB::table('Categories')->whereIn('id', ['HP', 'LAPTOP'])->get();
+
+        self::assertCount(2, $collection);
+        $collection->each(function ($value, $key) {
+            Log::info(json_encode($value));
+        });
+    }
+
+    public function testWhereNull()
+    {
+        $this->insertCategories();
+        $collection = DB::table('Categories')->whereNull('description')->get();
+
+        self::assertCount(4, $collection);
+        $collection->each(function ($value, $key) {
+            Log::info(json_encode($value));
+        });
+    }
+
+    public function testWhereDate()
+    {
+        $this->insertCategories();
+        $collection = DB::table('Categories')->whereDate('created_at', '2020-10-10')->get();
+
+        self::assertCount(4, $collection);
+        $collection->each(function ($value, $key) {
+            Log::info(json_encode($value));
+        });
+    }
+
+
+
+
+
+
 
 
 }
