@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('id', 100)->nullable(false)->primary();
             $table->string('name', 100)->nullable(false);
             $table->text('description')->nullable(true);
-            $table->integer('proce')->nullable(false);
+            $table->integer('price')->nullable(false);
             $table->string('category_id', 100)->nullable(false);
             $table->timestamp('created_at')->nullable(false)->useCurrent();
 

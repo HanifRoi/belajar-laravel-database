@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use Database\Seeders\CategorySeeder;
+use Database\Seeders\CounterSeeder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -15,7 +17,8 @@ class QueryBuilderTest extends TestCase
     {
         parent::setUp();
         DB::delete('DELETE FROM products');
-        DB::delete('DELETE FROM Categories');
+        DB::delete('DELETE FROM categories');
+        DB::delete('DELETE FROM counters');
     }
     public function testInsert()
     {
@@ -49,26 +52,7 @@ class QueryBuilderTest extends TestCase
 
     public function insertCategories()
     {
-        DB::table('Categories')->insert([
-            'id' => 'HP',
-            'name' => 'Hp',
-            'created_at'=> '2020-10-10 10:10:10'
-        ]);
-        DB::table('Categories')->insert([
-            'id' => 'LAPTOP',
-            'name' => 'Laptop',
-            'created_at'=> '2020-10-10 10:10:10'
-        ]);
-        DB::table('Categories')->insert([
-            'id' => 'GUNTING',
-            'name' => 'Gunting',
-            'created_at'=> '2020-10-10 10:10:10'
-        ]);
-        DB::table('Categories')->insert([
-            'id' => 'SISIR',
-            'name' => 'Sisir',
-            'created_at'=> '2020-10-10 10:10:10'
-        ]);
+        $this->seed(CategorySeeder::class);
     }
 
     public function testWhere()
@@ -165,6 +149,7 @@ class QueryBuilderTest extends TestCase
 
     public function testIncrement()
     {
+        $this->seed(CounterSeeder::class);
         DB::table('counters')->where('id', '=', 'sample')->increment('counter', 5);
 
         $collection = DB::table('counters')->where('id', '=', 'sample')->get();
@@ -174,6 +159,7 @@ class QueryBuilderTest extends TestCase
         });
     }public function testDecrement()
     {
+        $this->seed(CounterSeeder::class);
         DB::table('counters')->where('id', '=', 'sample')->decrement('counter', 5);
 
         $collection = DB::table('counters')->where('id', '=', 'sample')->get();
