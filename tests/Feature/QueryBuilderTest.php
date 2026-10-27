@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class QueryBuilderTest extends TestCase
@@ -31,4 +32,18 @@ class QueryBuilderTest extends TestCase
         self::assertEquals(2, $result[0]->total);
 
     }
+
+    public function testSelect()
+    {
+        $this->testInsert();
+
+        $collection = DB::table('Categories')->select(['id','name'])->get();
+        self::assertNotNull($collection);
+
+        $collection->each(function ($value, $key) {
+            Log::info(json_encode($value));
+        });
+    }
+
+
 }
