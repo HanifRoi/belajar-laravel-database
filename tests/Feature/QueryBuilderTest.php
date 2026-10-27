@@ -311,6 +311,24 @@ class QueryBuilderTest extends TestCase
 
     }
 
+    public function testAggregate()
+    {
+        $this->insertTableProduct();
+
+        $result = DB::table('products')->count("id");
+        self::assertEquals(2, $result);
+
+        $result = DB::table('products')->max("price");
+        self::assertEquals("3000000", $result);
+
+        $result = DB::table('products')->min("price");
+        self::assertEquals("2700000", $result);
+
+        $result = DB::table('products')->sum("price");
+        self::assertEquals("5700000", $result);
+
+    }
+
 
 
 
