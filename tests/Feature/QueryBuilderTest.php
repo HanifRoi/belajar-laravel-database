@@ -243,4 +243,22 @@ class QueryBuilderTest extends TestCase
             Log::info(json_encode($value));
         });
     }
+
+    public function testPaging()
+    {
+        $this->insertTableProduct();
+
+        $collection = DB::table('categories')
+        ->skip(2)
+        ->take(2)
+        ->get();
+
+        self::assertCount(2, $collection);
+        $collection->each(function ($value, $key) {
+            Log::info(json_encode($value));
+        });
+
+    }
+
+
 }
