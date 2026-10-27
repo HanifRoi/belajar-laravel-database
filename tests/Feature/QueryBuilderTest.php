@@ -195,15 +195,37 @@ class QueryBuilderTest extends TestCase
         });
     }
 
+    public function insertTableProduct()
+    {
+        $this->insertCategories();
 
+        DB::table('products')->insert([
+            'id'=>'1',
+            'name'=>'Realme 5',
+            'description'=>'Hp terlama gw',
+            'price'=>'2700000',
+            'category_id'=>'HP'
+        ]);
+        DB::table('products')->insert([
+            'id'=>'2',
+            'name'=>'Realme 6',
+            'description'=>'Belum pegang',
+            'price'=>'3000000',
+            'category_id'=>'HP'
+        ]);
+    }
 
-    
+    public function testJoin()
+    {
+        $this->insertTableProduct();
 
+        $collection = DB::table('products')
+        ->join('categories', 'products.category_id','=','categories.id')
+        ->select('products.id', 'products.name', 'categories.name as category_name', 'products.price')->get();
 
-
-
-
-
-
-
+        self::assertCount(2, $collection);
+        $collection->each(function ($value, $key) {
+            Log::info(json_encode($value));
+        });
+    }
 }
